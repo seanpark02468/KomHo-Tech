@@ -174,23 +174,23 @@ a:hover {
 .nav-logo {
   display: flex;
   align-items: center;
-  gap: 10px;
-}
-
-.logo-diamond {
-  width: 24px;
-  height: 24px;
-  background: var(--color-midnight-ink);
-  transform: rotate(45deg);
-  border-radius: 6px;
 }
 
 .logo-text {
   font-family: var(--font-display);
-  font-size: var(--text-body-lg);
-  font-weight: 600;
+  font-size: 24px;
+  font-weight: 800;
   color: var(--color-midnight-ink);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.04em;
+  user-select: none;
+  display: inline-flex;
+  align-items: center;
+}
+
+.logo-text::after {
+  content: '.';
+  color: var(--color-tangerine);
+  margin-left: 1px;
 }
 
 
