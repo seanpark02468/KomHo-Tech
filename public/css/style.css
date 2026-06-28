@@ -189,34 +189,37 @@ a:hover {
   letter-spacing: -0.02em;
 }
 
-.nav-links {
+
+
+.nav-lang-selector {
   display: flex;
-  align-items: center;
-  gap: 24px;
+  gap: 4px;
+  background-color: var(--color-paper-white);
+  border: 1px solid var(--color-stone);
+  border-radius: var(--radius-pills);
+  padding: 3px;
 }
 
-.nav-links a {
-  font-size: var(--text-body);
+.lang-btn {
+  border: none;
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
   color: var(--color-stone);
-  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: var(--radius-pills);
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.nav-links a:hover {
+.lang-btn:hover {
   color: var(--color-midnight-ink);
 }
 
-.nav-links .nav-github-link {
+.lang-btn.active {
   background-color: var(--color-pressed-charcoal);
   color: var(--color-pure-white);
-  padding: 8px 16px;
-  border-radius: var(--radius-pills);
-  font-size: 13px;
-  transition: transform 0.2s ease, opacity 0.2s ease;
-}
-
-.nav-links .nav-github-link:hover {
-  transform: translateY(-2px);
-  opacity: 0.9;
 }
 
 /* App Container Layout */

@@ -29,63 +29,116 @@ const MatchEngine = {
     return Math.min(100, Math.max(0, scorePercentage));
   },
 
-  // 2. 동적 매칭 사유 생성기
+  // 2. 동적 매칭 사유 생성기 (다국어 지원)
   // 사용자의 MBTI 유형(예: "ENFP")과 맛집의 특징(mbti_scores)을 바탕으로 맞춤형 1줄 추천 이유를 생성합니다.
-  generateReason: function(mbtiStr, rst) {
+  generateReason: function(mbtiStr, rst, lang = 'ko') {
     const rScores = rst.mbti_scores;
     const reasons = [];
 
+    const REASONS = {
+      E: {
+        ko: "활기찬 에너지가 넘치고 소통하기 좋은 공간",
+        en: "a lively space filled with energy and great for social interaction"
+      },
+      I: {
+        ko: "아늑하고 조용하여 차분히 쉴 수 있는 골목 맛집",
+        en: "a cozy and quiet alley restaurant where you can relax calmly"
+      },
+      S: {
+        ko: "정통 로컬의 깊은 손맛을 느끼게 해주는 노포",
+        en: "a local heritage spot serving deep traditional flavors"
+      },
+      N: {
+        ko: "이색적이고 독특한 감성으로 감각을 깨워줄 핫플",
+        en: "a trendy hot spot that awakens your senses with unique vibes"
+      },
+      T: {
+        ko: "합리적인 가격과 푸짐한 양으로 실속 있는 한 끼",
+        en: "a practical and value-for-money meal with generous portions"
+      },
+      F: {
+        ko: "아름다운 전망과 로맨틱한 무드를 품은 감성 충전소",
+        en: "a beautiful aesthetic spot with romantic vibes and scenic views"
+      },
+      J: {
+        ko: "정갈하고 정돈된 상차림으로 계획적인 일정에 알맞은 곳",
+        en: "a neat and organized dining setup perfect for structured schedules"
+      },
+      P: {
+        ko: "가볍고 편안하게 방문해 뜻밖의 행복을 즐기는 곳",
+        en: "a casual place to drop by easily and enjoy spontaneous happiness"
+      }
+    };
+
     // E vs I
     if (mbtiStr.includes('E') && rScores.E >= 0.6) {
-      reasons.push("활기찬 에너지가 넘치고 소통하기 좋은 공간");
+      reasons.push(REASONS.E[lang]);
     } else if (mbtiStr.includes('I') && rScores.I >= 0.6) {
-      reasons.push("아늑하고 조용하여 차분히 쉴 수 있는 골목 맛집");
+      reasons.push(REASONS.I[lang]);
     }
 
     // S vs N
     if (mbtiStr.includes('S') && rScores.S >= 0.6) {
-      reasons.push("정통 로컬의 깊은 손맛을 느끼게 해주는 노포");
+      reasons.push(REASONS.S[lang]);
     } else if (mbtiStr.includes('N') && rScores.N >= 0.6) {
-      reasons.push("이색적이고 독특한 감성으로 감각을 깨워줄 핫플");
+      reasons.push(REASONS.N[lang]);
     }
 
     // T vs F
     if (mbtiStr.includes('T') && rScores.T >= 0.6) {
-      reasons.push("합리적인 가격과 푸짐한 양으로 실속 있는 한 끼");
+      reasons.push(REASONS.T[lang]);
     } else if (mbtiStr.includes('F') && rScores.F >= 0.6) {
-      reasons.push("아름다운 전망과 로맨틱한 무드를 품은 감성 충전소");
+      reasons.push(REASONS.F[lang]);
     }
 
     // J vs P
     if (mbtiStr.includes('J') && rScores.J >= 0.6) {
-      reasons.push("정갈하고 정돈된 상차림으로 계획적인 일정에 알맞은 곳");
+      reasons.push(REASONS.J[lang]);
     } else if (mbtiStr.includes('P') && rScores.P >= 0.6) {
-      reasons.push("가볍고 편안하게 방문해 뜻밖의 행복을 즐기는 곳");
+      reasons.push(REASONS.P[lang]);
     }
 
     // 만약 특출난 성향 매칭이 없을 때의 기본값 설정
     if (reasons.length === 0) {
-      if (rst.genre === 'Cafe') {
-        return "여유롭게 바다를 만끽하며 향긋한 음료를 즐기기 좋은 카페입니다.";
-      } else if (rst.genre === 'Seafood') {
-        return "부산 바다의 싱싱함을 한 그릇에 담아낸 해산물 대표 명소입니다.";
+      if (lang === 'ko') {
+        if (rst.genre === 'Cafe') {
+          return "여유롭게 바다를 만끽하며 향긋한 음료를 즐기기 좋은 카페입니다.";
+        } else if (rst.genre === 'Seafood') {
+          return "부산 바다의 싱싱함을 한 그릇에 담아낸 해산물 대표 명소입니다.";
+        } else {
+          return "부산 특유의 정취와 대표적인 전통 미식을 만끽할 수 있는 식당입니다.";
+        }
       } else {
-        return "부산 특유의 정취와 대표적인 전통 미식을 만끽할 수 있는 식당입니다.";
+        if (rst.genre === 'Cafe') {
+          return "A great cafe to enjoy pleasant drinks while soaking in the ocean view.";
+        } else if (rst.genre === 'Seafood') {
+          return "A representative seafood spot serving the freshness of Busan sea in a bowl.";
+        } else {
+          return "A restaurant where you can fully enjoy Busan's unique atmosphere and traditional gastronomy.";
+        }
       }
     }
 
     // 가장 도드라지는 특징 2개를 엮어서 한 문장으로 완성
-    if (reasons.length >= 2) {
-      return `${reasons[0]}이며, ${reasons[1]}입니다.`;
+    if (lang === 'ko') {
+      if (reasons.length >= 2) {
+        return `${reasons[0]}이며, ${reasons[1]}입니다.`;
+      }
+      return `${reasons[0]}입니다.`;
+    } else {
+      if (reasons.length >= 2) {
+        const first = reasons[0].charAt(0).toUpperCase() + reasons[0].slice(1);
+        return `${first}, and is ${reasons[1]}.`;
+      }
+      const first = reasons[0].charAt(0).toUpperCase() + reasons[0].slice(1);
+      return `${first}.`;
     }
-    
-    return `${reasons[0]}입니다.`;
   },
 
-  // 3. 맛집 데이터 전체 매칭 및 정렬
+  // 3. 맛집 데이터 전체 매칭 및 정렬 (다국어 지원)
   // userMbtiObj: { mbti: "ENFP", scores: { E: 3, I: 0, S: 0, N: 3, ... } }
   // restaurants: restaurants.json 배열
-  matchAndSort: function(userMbtiObj, restaurants) {
+  matchAndSort: function(userMbtiObj, restaurants, lang = 'ko') {
     // 퀴즈 결과 점수를 0~1 사이로 정규화
     const userScoresNormalized = {};
     const axes = [['E', 'I'], ['S', 'N'], ['T', 'F'], ['J', 'P']];
@@ -105,7 +158,7 @@ const MatchEngine = {
 
     return restaurants.map(rst => {
       const matchScore = this.calculateMatchScore(userScoresNormalized, rst.mbti_scores);
-      const reason = this.generateReason(userMbtiObj.mbti, rst);
+      const reason = this.generateReason(userMbtiObj.mbti, rst, lang);
       return {
         ...rst,
         matchScore,

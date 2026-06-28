@@ -25,7 +25,7 @@
   <div id="global-loader" class="global-loader">
     <div class="loader-content">
       <div class="loader-diamond"></div>
-      <p>부산 맛집 공공데이터 로딩 중...</p>
+      <p data-i18n="global-loader-text">부산 맛집 공공데이터 로딩 중...</p>
     </div>
   </div>
 
@@ -34,13 +34,12 @@
     <div class="nav-container">
       <div class="nav-logo">
         <div class="logo-diamond"></div>
-        <span class="logo-text">미식지니</span>
+        <span class="logo-text" data-i18n="nav-logo-text">미식지니</span>
       </div>
-      <div class="nav-links">
-        <a href="#how-it-works">How it works</a>
-        <a href="https://github.com/seanpark02468/KomHo-Tech" target="_blank" class="nav-github-link">
-          <i class="fab fa-github"></i> Repository
-        </a>
+      <!-- 우측 상단 언어 선택기 (KOR / ENG) -->
+      <div class="nav-lang-selector">
+        <button id="lang-ko-btn" class="lang-btn active">KOR</button>
+        <button id="lang-en-btn" class="lang-btn">ENG</button>
       </div>
     </div>
   </header>
@@ -64,15 +63,15 @@
           <div class="avatar avatar-amethyst">☕</div>
           <div class="avatar avatar-mustard">🦀</div>
         </div>
-        <h1 class="hero-title">
+        <h1 class="hero-title" data-i18n="hero-title">
           나의 여행 <span class="highlight-text">MBTI</span>에 맞는<br>
           부산 최고의 맛집을 지도로
         </h1>
-        <p class="hero-subtitle">
+        <p class="hero-subtitle" data-i18n="hero-subtitle">
           부산 미식투어 공공데이터와 여행 성향 퀴즈를 결합하여<br>
           당신의 취향을 저격하는 1:1 커스텀 맛집 큐레이션 지도를 그려드립니다.
         </p>
-        <button id="start-quiz-btn" class="btn btn-primary">
+        <button id="start-quiz-btn" class="btn btn-primary" data-i18n="start-quiz-btn">
           미식 성향 퀴즈 시작하기 <i class="fas fa-arrow-right"></i>
         </button>
       </div>
@@ -86,7 +85,7 @@
           <div id="quiz-progress-fill" class="progress-fill"></div>
         </div>
         <div class="quiz-meta">
-          <span class="quiz-badge">성향 분석 퀴즈</span>
+          <span class="quiz-badge" data-i18n="quiz-badge">성향 분석 퀴즈</span>
           <span id="quiz-progress-text" class="progress-text">1 / 12</span>
         </div>
         
@@ -110,8 +109,8 @@
           <div class="doodle-blob blob-2"></div>
           <div class="doodle-blob blob-3"></div>
         </div>
-        <h2>당신의 취향 맵을 분석 중입니다...</h2>
-        <p>부산 공공데이터 식당의 텍스트와 취향 매칭도를 분석하여 정밀 정렬을 수행하고 있습니다.</p>
+        <h2 data-i18n="loading-title">당신의 취향 맵을 분석 중입니다...</h2>
+        <p data-i18n="loading-subtitle">부산 공공데이터 식당의 텍스트와 취향 매칭도를 분석하여 정밀 정렬을 수행하고 있습니다.</p>
       </div>
     </section>
 
@@ -129,17 +128,17 @@
             이동 동선과 웨이팅 시간까지 치밀하게 설계하여 검증된 전통 맛집과 깔끔한 정식을 실패 없이 정복하는 프로 계획러입니다.
           </p>
         </div>
-        <button id="restart-btn" class="btn btn-secondary">
+        <button id="restart-btn" class="btn btn-secondary" data-i18n="restart-btn">
           <i class="fas fa-undo"></i> 다시 검사하기
         </button>
       </div>
 
       <!-- 모바일 화면용 지도/리스트 탭 전환 버튼 -->
       <div class="mobile-tab-switch">
-        <button id="toggle-map-view" class="tab-btn active">
+        <button id="toggle-map-view" class="tab-btn active" data-i18n="toggle-map-view">
           <i class="fas fa-map-marked-alt"></i> 지도 보기
         </button>
-        <button id="toggle-list-view" class="tab-btn">
+        <button id="toggle-list-view" class="tab-btn" data-i18n="toggle-list-view">
           <i class="fas fa-list-ul"></i> 리스트 보기
         </button>
       </div>
@@ -158,13 +157,13 @@
         <div class="list-section">
           <!-- 상단 카테고리 필터 바 (Pill Shape) -->
           <div id="genre-filters" class="genre-filters-bar">
-            <button class="filter-chip active" data-genre="all">전체</button>
-            <button class="filter-chip" data-genre="Korean">한식</button>
-            <button class="filter-chip" data-genre="Seafood">해산물</button>
-            <button class="filter-chip" data-genre="Japanese">일식</button>
-            <button class="filter-chip" data-genre="Western">양식</button>
-            <button class="filter-chip" data-genre="Chinese">중식</button>
-            <button class="filter-chip" data-genre="Cafe">카페·디저트</button>
+            <button class="filter-chip active" data-genre="all" data-i18n="filter-all">전체</button>
+            <button class="filter-chip" data-genre="Korean" data-i18n="filter-korean">한식</button>
+            <button class="filter-chip" data-genre="Seafood" data-i18n="filter-seafood">해산물</button>
+            <button class="filter-chip" data-genre="Japanese" data-i18n="filter-japanese">일식</button>
+            <button class="filter-chip" data-genre="Western" data-i18n="filter-western">양식</button>
+            <button class="filter-chip" data-genre="Chinese" data-i18n="filter-chinese">중식</button>
+            <button class="filter-chip" data-genre="Cafe" data-i18n="filter-cafe">카페·디저트</button>
           </div>
 
           <!-- 맛집 카드 리스트 스크롤 영역 -->
@@ -183,6 +182,7 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
   <!-- Custom Scripts -->
+  <script src="js/i18n.js"></script>
   <script src="js/quiz.js"></script>
   <script src="js/matcher.js"></script>
   <script src="js/map.js"></script>
