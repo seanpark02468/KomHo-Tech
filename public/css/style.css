@@ -731,7 +731,7 @@ a:hover {
   overflow: hidden;
   cursor: pointer;
   transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
-  min-height: 180px;
+  min-height: 220px;
 }
 
 .restaurant-card:hover {
@@ -748,7 +748,7 @@ a:hover {
 }
 
 .card-image-box {
-  min-height: 180px;
+  min-height: 220px;
   width: 150px;
   position: relative;
   flex-shrink: 0;
