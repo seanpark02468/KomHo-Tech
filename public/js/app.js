@@ -308,26 +308,15 @@ const AppController = {
     const allMatched = this.state.matchedRestaurants;
     const lang = this.state.lang;
     
-    const scores = this.state.mbtiResult ? this.state.mbtiResult.scores : { J: 0, P: 0 };
+    // 사용자가 '전체' 탭에서 다른 모든 카테고리의 음식점들이 보이길 원하므로,
+    // 전체 탭일 때의 엄격한 개수 제한을 해제하고 충분히 많은 개수를 보여줍니다.
+    let limit = 50; 
     
-    // J/P 성향에 따른 노출 개수 결정 ('전체' 탭일 때)
-    let limit = 30;
-    if (genre === 'all') {
-      if (scores.J === 3) limit = 3;
-      else if (scores.J === 2) limit = 5;
-      else if (scores.P === 2) limit = 8;
-      else if (scores.P === 3) limit = 10;
-      else limit = 10; // Fallback
-    } else {
-      // 특정 장르 선택 시: 매칭 결과가 너무 적어지는 것을 방지하기 위해 최대 15개까지 노출 (폴백 전략)
-      limit = 15; 
-    }
-
     let filtered = genre === 'all' 
       ? allMatched 
       : allMatched.filter(r => r.genre === genre);
 
-    // 폴백: 매칭 점수 조건 완화 로직 (매칭 점수가 높은 순으로 이미 정렬되어 있으므로 개수만 잘라냄)
+    // 필터링된 결과에서 limit만큼 잘라서 보여줌
     const displayList = filtered.slice(0, limit);
 
     // 카드 리스트 렌더링
