@@ -46,23 +46,23 @@ const MapModule = {
 
     if (genre === 'Cafe') {
       color = '#9552e0'; // Amethyst (보라)
-      svgIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="2" x2="6" y2="4"></line><line x1="10" y1="2" x2="10" y2="4"></line><line x1="14" y1="2" x2="14" y2="4"></line></svg>`;
+      svgIcon = `<span style="font-size: 18px; line-height: 1;">🍞</span>`;
     } else if (genre === 'Seafood') {
       color = '#4fbeff'; // Cornflower (하늘색)
-      svgIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><path d="M2 12c.5-2 1.5-3.5 3-4 1.5-.5 3 .5 4.5 1.5 1.5 1 3.5 1 5-1.5s2.5-4 4.5-4.5 3.5 2 3.5 4.5c0 3.5-3 5-6 6s-7.5-.5-9.5-2c-2-1.5-3.5-2.5-5-.5Z"></path><path d="M16 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"></path></svg>`;
+      svgIcon = `<span style="font-size: 18px; line-height: 1;">🦞</span>`;
     } else if (genre === 'Japanese') {
       color = '#0099ff'; // Signal Blue (파랑)
-      svgIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path><path d="M2 12h20"></path></svg>`; // Sushi/Global
+      svgIcon = `<span style="font-size: 18px; line-height: 1;">🍣</span>`; 
     } else if (genre === 'Chinese') {
       color = '#bb9915'; // Mustard (노랑)
-      svgIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><path d="M12 2L2 22h20L12 2z"></path><circle cx="12" cy="13" r="3"></circle></svg>`; // Bowl/Chopstick mock
+      svgIcon = `<span style="font-size: 18px; line-height: 1;">🥟</span>`; 
     } else if (genre === 'Western') {
       color = '#f26110'; // Tangerine (오렌지)
-      svgIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>`; // Western dollar/premium sign or similar
+      svgIcon = `<span style="font-size: 18px; line-height: 1;">🍝</span>`; 
     } else {
       // Korean (한식)
       color = '#f26110'; // Tangerine (오렌지)
-      svgIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path><path d="M12 6v12M6 12h12"></path></svg>`; // Cook/Dish
+      svgIcon = `<span style="font-size: 18px; line-height: 1;">🥘</span>`; 
     }
 
     // 커스텀 SVG 마커 디자인 (32px 모서리와 Stone hairline 외곽선)
