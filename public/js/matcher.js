@@ -1,170 +1,141 @@
 // 사용자 MBTI 성향과 맛집 데이터 매칭 엔진
 const MatchEngine = {
   // 1. 매칭 점수 계산 (0 ~ 100%)
-  // userScores: { E, I, S, N, T, F, J, P } (각 차원 합산 후 정규화된 값)
-  // restaurantScores: { E, I, S, N, T, F, J, P }
-  calculateMatchScore: function(userScores, restaurantScores) {
-    let dotProduct = 0;
-    let userNorm = 0;
-    let rstNorm = 0;
-
-    const dimensions = ['E', 'I', 'S', 'N', 'T', 'F', 'J', 'P'];
-
-    dimensions.forEach(dim => {
-      const u = userScores[dim] || 0.5;
-      const r = restaurantScores[dim] || 0.5;
-      dotProduct += u * r;
-      userNorm += u * u;
-      rstNorm += r * r;
-    });
-
-    userNorm = Math.sqrt(userNorm);
-    rstNorm = Math.sqrt(rstNorm);
-
-    if (userNorm === 0 || rstNorm === 0) return 50;
-
-    // 코사인 유사도를 계산하여 50% ~ 100% 범위로 스케일링
-    const cosineSimilarity = dotProduct / (userNorm * rstNorm);
-    const scorePercentage = Math.round((0.4 + cosineSimilarity * 0.6) * 100);
-    return Math.min(100, Math.max(0, scorePercentage));
+  calculateMatchScore: function(userWeights, restaurantScores) {
+    let totalScore = 0;
+    
+    // 축별 점수: 사용자 가중치 * 맛집 속성값
+    const scoreEI = (userWeights.E_I || 0) * (restaurantScores.E_I || 0);
+    const scoreNS = (userWeights.N_S || 0) * (restaurantScores.N_S || 0);
+    const scoreFT = (userWeights.F_T || 0) * (restaurantScores.F_T || 0);
+    
+    totalScore = scoreEI + scoreNS + scoreFT;
+    
+    // 최종 매칭률(%): (총점 + 3) / 6 * 100 (0% ~ 100% 범위로 변환)
+    const matchPercentage = Math.round(((totalScore + 3) / 6) * 100);
+    
+    return {
+      percentage: Math.min(100, Math.max(0, matchPercentage)),
+      contributions: {
+        E_I: scoreEI,
+        N_S: scoreNS,
+        F_T: scoreFT
+      }
+    };
   },
 
   // 2. 동적 매칭 사유 생성기 (다국어 지원)
-  // 사용자의 MBTI 유형(예: "ENFP")과 맛집의 특징(mbti_scores)을 바탕으로 맞춤형 1줄 추천 이유를 생성합니다.
-  generateReason: function(mbtiStr, rst, lang = 'ko') {
-    const rScores = rst.mbti_scores;
-    const reasons = [];
-
-    const REASONS = {
+  generateReason: function(userWeights, contributions, lang = 'ko') {
+    let maxAxis = '';
+    let maxVal = -Infinity;
+    
+    for (const [axis, val] of Object.entries(contributions)) {
+      if (val > maxVal) {
+        maxVal = val;
+        maxAxis = axis;
+      }
+    }
+    
+    let trait = '';
+    if (maxAxis === 'E_I') trait = userWeights.E_I > 0 ? 'E' : 'I';
+    else if (maxAxis === 'N_S') trait = userWeights.N_S > 0 ? 'N' : 'S';
+    else if (maxAxis === 'F_T') trait = userWeights.F_T > 0 ? 'F' : 'T';
+    
+    const TEMPLATES = {
       E: {
-        ko: "활기찬 에너지가 넘치고 소통하기 좋은 공간",
-        en: "a lively space filled with energy and great for social interaction"
+        ko: "활기찬 에너지가 넘치는 당신께 - 소통하기 좋은 핫플",
+        en: "For you with vibrant energy - a hot spot great for mingling"
       },
       I: {
-        ko: "아늑하고 조용하여 차분히 쉴 수 있는 골목 맛집",
-        en: "a cozy and quiet alley restaurant where you can relax calmly"
-      },
-      S: {
-        ko: "정통 로컬의 깊은 손맛을 느끼게 해주는 노포",
-        en: "a local heritage spot serving deep traditional flavors"
+        ko: "조용하고 아늑한 곳을 찾는 당신께 - 차분히 쉬어갈 수 있는 숨은 맛집",
+        en: "For you seeking cozy places - a hidden gem where you can relax calmly"
       },
       N: {
-        ko: "이색적이고 독특한 감성으로 감각을 깨워줄 핫플",
-        en: "a trendy hot spot that awakens your senses with unique vibes"
+        ko: "새로운 걸 즐기는 당신께 - 여기서만 맛볼 수 있는 시그니처 메뉴",
+        en: "For you who enjoys new things - unique signature menus you can only taste here"
       },
-      T: {
-        ko: "합리적인 가격과 푸짐한 양으로 실속 있는 한 끼",
-        en: "a practical and value-for-money meal with generous portions"
+      S: {
+        ko: "익숙한 맛의 깊이를 아는 당신께 - 정통 로컬의 깊은 손맛을 느끼게 해주는 곳",
+        en: "For you who knows familiar tastes - a heritage spot with deep traditional flavors"
       },
       F: {
-        ko: "아름다운 전망과 로맨틱한 무드를 품은 감성 충전소",
-        en: "a beautiful aesthetic spot with romantic vibes and scenic views"
+        ko: "감성을 아는 당신께 - 작품 같은 공간의 한 끼",
+        en: "For you who appreciates aesthetics - a picturesque meal"
       },
-      J: {
-        ko: "정갈하고 정돈된 상차림으로 계획적인 일정에 알맞은 곳",
-        en: "a neat and organized dining setup perfect for structured schedules"
-      },
-      P: {
-        ko: "가볍고 편안하게 방문해 뜻밖의 행복을 즐기는 곳",
-        en: "a casual place to drop by easily and enjoy spontaneous happiness"
+      T: {
+        ko: "합리적 가치를 중시하는 당신께 - 실속 있는 한 끼",
+        en: "For you who values rationality - a practical meal"
       }
     };
-
-    // E vs I
-    if (mbtiStr.includes('E') && rScores.E >= 0.6) {
-      reasons.push(REASONS.E[lang]);
-    } else if (mbtiStr.includes('I') && rScores.I >= 0.6) {
-      reasons.push(REASONS.I[lang]);
+    
+    if (trait && TEMPLATES[trait] && maxVal > 0) {
+      return TEMPLATES[trait][lang];
     }
-
-    // S vs N
-    if (mbtiStr.includes('S') && rScores.S >= 0.6) {
-      reasons.push(REASONS.S[lang]);
-    } else if (mbtiStr.includes('N') && rScores.N >= 0.6) {
-      reasons.push(REASONS.N[lang]);
-    }
-
-    // T vs F
-    if (mbtiStr.includes('T') && rScores.T >= 0.6) {
-      reasons.push(REASONS.T[lang]);
-    } else if (mbtiStr.includes('F') && rScores.F >= 0.6) {
-      reasons.push(REASONS.F[lang]);
-    }
-
-    // J vs P
-    if (mbtiStr.includes('J') && rScores.J >= 0.6) {
-      reasons.push(REASONS.J[lang]);
-    } else if (mbtiStr.includes('P') && rScores.P >= 0.6) {
-      reasons.push(REASONS.P[lang]);
-    }
-
-    // 만약 특출난 성향 매칭이 없을 때의 기본값 설정
-    if (reasons.length === 0) {
-      if (lang === 'ko') {
-        if (rst.genre === 'Cafe') {
-          return "여유롭게 바다를 만끽하며 향긋한 음료를 즐기기 좋은 카페입니다.";
-        } else if (rst.genre === 'Seafood') {
-          return "부산 바다의 싱싱함을 한 그릇에 담아낸 해산물 대표 명소입니다.";
-        } else {
-          return "부산 특유의 정취와 대표적인 전통 미식을 만끽할 수 있는 식당입니다.";
-        }
-      } else {
-        if (rst.genre === 'Cafe') {
-          return "A great cafe to enjoy pleasant drinks while soaking in the ocean view.";
-        } else if (rst.genre === 'Seafood') {
-          return "A representative seafood spot serving the freshness of Busan sea in a bowl.";
-        } else {
-          return "A restaurant where you can fully enjoy Busan's unique atmosphere and traditional gastronomy.";
-        }
-      }
-    }
-
-    // 가장 도드라지는 특징 2개를 엮어서 한 문장으로 완성
-    if (lang === 'ko') {
-      if (reasons.length >= 2) {
-        return `${reasons[0]}이며, ${reasons[1]}입니다.`;
-      }
-      return `${reasons[0]}입니다.`;
-    } else {
-      if (reasons.length >= 2) {
-        const first = reasons[0].charAt(0).toUpperCase() + reasons[0].slice(1);
-        return `${first}, and is ${reasons[1]}.`;
-      }
-      const first = reasons[0].charAt(0).toUpperCase() + reasons[0].slice(1);
-      return `${first}.`;
-    }
+    
+    // 만약 양수 기여도가 없다면 (전부 음수이거나 0)
+    return lang === 'ko' ? "부산 특유의 정취와 맛을 만끽할 수 있는 식당입니다." : "A restaurant where you can fully enjoy Busan's unique atmosphere and taste.";
   },
 
   // 3. 맛집 데이터 전체 매칭 및 정렬 (다국어 지원)
-  // userMbtiObj: { mbti: "ENFP", scores: { E: 3, I: 0, S: 0, N: 3, ... } }
-  // restaurants: restaurants.json 배열
   matchAndSort: function(userMbtiObj, restaurants, lang = 'ko') {
-    // 퀴즈 결과 점수를 0~1 사이로 정규화
-    const userScoresNormalized = {};
-    const axes = [['E', 'I'], ['S', 'N'], ['T', 'F'], ['J', 'P']];
+    // 사용자 가중치 변환
+    const userWeights = { E_I: 0, N_S: 0, F_T: 0 };
     
-    axes.forEach(([dim1, dim2]) => {
-      const s1 = userMbtiObj.scores[dim1] || 0;
-      const s2 = userMbtiObj.scores[dim2] || 0;
-      const sum = s1 + s2;
-      if (sum > 0) {
-        userScoresNormalized[dim1] = s1 / sum;
-        userScoresNormalized[dim2] = s2 / sum;
-      } else {
-        userScoresNormalized[dim1] = 0.5;
-        userScoresNormalized[dim2] = 0.5;
-      }
-    });
+    if (userMbtiObj.scores.E === 3) userWeights.E_I = 1.0;
+    else if (userMbtiObj.scores.E === 2) userWeights.E_I = 0.5;
+    else if (userMbtiObj.scores.I === 3) userWeights.E_I = -1.0;
+    else if (userMbtiObj.scores.I === 2) userWeights.E_I = -0.5;
+    
+    if (userMbtiObj.scores.N === 3) userWeights.N_S = 1.0;
+    else if (userMbtiObj.scores.N === 2) userWeights.N_S = 0.5;
+    else if (userMbtiObj.scores.S === 3) userWeights.N_S = -1.0;
+    else if (userMbtiObj.scores.S === 2) userWeights.N_S = -0.5;
+    
+    if (userMbtiObj.scores.F === 3) userWeights.F_T = 1.0;
+    else if (userMbtiObj.scores.F === 2) userWeights.F_T = 0.5;
+    else if (userMbtiObj.scores.T === 3) userWeights.F_T = -1.0;
+    else if (userMbtiObj.scores.T === 2) userWeights.F_T = -0.5;
 
-    return restaurants.map(rst => {
-      const matchScore = this.calculateMatchScore(userScoresNormalized, rst.mbti_scores);
-      const reason = this.generateReason(userMbtiObj.mbti, rst, lang);
+    const matchedList = restaurants.map(rst => {
+      const { percentage, contributions } = this.calculateMatchScore(userWeights, rst.mbti_scores);
+      const reason = this.generateReason(userWeights, contributions, lang);
       return {
         ...rst,
-        matchScore,
+        matchScore: percentage,
         matchReason: reason
       };
-    }).sort((a, b) => b.matchScore - a.matchScore); // 매칭 점수 내림차순 정렬
+    });
+
+    matchedList.sort((a, b) => b.matchScore - a.matchScore);
+    
+    // P 성향 다양성 정렬 로직
+    const isP3 = userMbtiObj.scores.P === 3;
+    const isP2 = userMbtiObj.scores.P === 2;
+    
+    if (isP3 || isP2) {
+      const diverseList = [];
+      const genreCounts = {};
+      const maxPerGenre = isP3 ? 2 : 3; 
+      
+      const remaining = [...matchedList];
+      
+      while (remaining.length > 0) {
+        // 장르 카운트가 maxPerGenre 미만이면서 가장 매칭 점수가 높은 항목을 찾음
+        const index = remaining.findIndex(r => (genreCounts[r.genre] || 0) < maxPerGenre);
+        if (index !== -1) {
+          const rst = remaining.splice(index, 1)[0];
+          diverseList.push(rst);
+          genreCounts[rst.genre] = (genreCounts[rst.genre] || 0) + 1;
+        } else {
+          // 모든 장르가 maxPerGenre를 채웠다면 남은 것들을 그냥 넣음
+          diverseList.push(...remaining);
+          break;
+        }
+      }
+      return diverseList;
+    }
+    
+    return matchedList;
   }
 };
 

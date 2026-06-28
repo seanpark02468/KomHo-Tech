@@ -56,27 +56,34 @@ function tagRestaurant(item) {
     }
   }
 
-  // 2. MBTI 스코어링 (기본값 0.5)
-  const scores = { E: 0.5, I: 0.5, S: 0.5, N: 0.5, T: 0.5, F: 0.5, J: 0.5, P: 0.5 };
+  // 2. MBTI 속성 점수화 (-1.0 ~ +1.0)
+  // J/P 축 제외, E(분위기+), I(분위기-), N(메뉴+), S(메뉴-), F(가치+), T(가치-) 로 사용
+  const scores = { E_I: 0.0, N_S: 0.0, F_T: 0.0 };
   
   const axes = [
-    { dim1: 'E', dim2: 'I' },
-    { dim1: 'S', dim2: 'N' },
-    { dim1: 'T', dim2: 'F' },
-    { dim1: 'J', dim2: 'P' }
+    { pos: 'E', neg: 'I', key: 'E_I' }, // 분위기
+    { pos: 'N', neg: 'S', key: 'N_S' }, // 메뉴
+    { pos: 'F', neg: 'T', key: 'F_T' }  // 가치
   ];
 
-  axes.forEach(({ dim1, dim2 }) => {
-    const score1 = countOccurrences(textToAnalyze, KEYWORDS[dim1]);
-    const score2 = countOccurrences(textToAnalyze, KEYWORDS[dim2]);
-    const total = score1 + score2;
+  axes.forEach(({ pos, neg, key }) => {
+    const posScore = countOccurrences(textToAnalyze, KEYWORDS[pos]);
+    const negScore = countOccurrences(textToAnalyze, KEYWORDS[neg]);
+    const total = posScore + negScore;
     
+    let val = 0.0;
     if (total > 0) {
-      // 비율에 맞춰 가중치 분배 (최소 0.2, 최대 0.8로 제한하여 극단적 매칭 방지)
-      const ratio1 = score1 / total;
-      scores[dim1] = Math.round((0.2 + ratio1 * 0.6) * 10) / 10;
-      scores[dim2] = Math.round((1 - scores[dim1]) * 10) / 10;
+      // (양 - 음) / (양 + 음)
+      val = (posScore - negScore) / total;
     }
+    
+    // 가산점: 번화가(해운대구, 부산진구, 수영구, 중구)일 경우 분위기 축(E_I)에 +0.2 가산
+    if (key === 'E_I' && ['해운대구', '부산진구', '수영구', '중구'].includes(item.GUGUN_NM)) {
+      val += 0.2;
+    }
+    
+    // -1.0 ~ 1.0 범위 제한 및 소수점 2자리 반올림
+    scores[key] = Math.max(-1.0, Math.min(1.0, Math.round(val * 100) / 100));
   });
 
   return {
