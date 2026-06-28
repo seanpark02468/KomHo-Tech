@@ -63,6 +63,10 @@
 
 body {
   background-color: var(--color-sky-wash);
+  background-image: url('../images/blue-sea-bg.png');
+  background-size: cover;
+  background-position: center bottom;
+  background-attachment: fixed;
   color: var(--color-stone);
   font-family: var(--font-body);
   font-size: var(--text-body);
