@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>미식지니 - MBTI 기반 부산 맛집 지도 추천</title>
+  
+  <!-- Google Fonts: Inter & Geist & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- Leaflet.js Map CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  
+  <!-- FontAwesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  
+  <!-- Custom Style Sheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- 글로벌 초기화 로더 -->
+  <div id="global-loader" class="global-loader">
+    <div class="loader-content">
+      <div class="loader-diamond"></div>
+      <p>부산 맛집 공공데이터 로딩 중...</p>
+    </div>
+  </div>
+
+  <!-- 상단 네비게이션 바 (Transparent Floating Bar) -->
+  <header class="top-nav">
+    <div class="nav-container">
+      <div class="nav-logo">
+        <div class="logo-diamond"></div>
+        <span class="logo-text">미식지니</span>
+      </div>
+      <div class="nav-links">
+        <a href="#how-it-works">How it works</a>
+        <a href="https://github.com/seanpark02468/KomHo-Tech" target="_blank" class="nav-github-link">
+          <i class="fab fa-github"></i> Repository
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- 메인 프레임워크 -->
+  <main class="app-container">
+
+    <!-- 1. 소개 화면 (Intro View) -->
+    <section id="intro-view" class="view-section intro-section">
+      <!-- 배경 낙서 장식들 (Floating Doodles) -->
+      <div class="floating-doodle bubble-1">🍜</div>
+      <div class="floating-doodle bubble-2">🌊</div>
+      <div class="floating-doodle bubble-3">🐟</div>
+      <div class="floating-doodle bubble-4">☕</div>
+      <div class="floating-doodle bubble-5">☁️</div>
+
+      <div class="hero-block">
+        <div class="avatar-group">
+          <div class="avatar avatar-cornflower">🍔</div>
+          <div class="avatar avatar-tangerine">🍣</div>
+          <div class="avatar avatar-amethyst">☕</div>
+          <div class="avatar avatar-mustard">🦀</div>
+        </div>
+        <h1 class="hero-title">
+          나의 여행 <span class="highlight-text">MBTI</span>에 맞는<br>
+          부산 최고의 맛집을 지도로
+        </h1>
+        <p class="hero-subtitle">
+          부산 미식투어 공공데이터와 여행 성향 퀴즈를 결합하여<br>
+          당신의 취향을 저격하는 1:1 커스텀 맛집 큐레이션 지도를 그려드립니다.
+        </p>
+        <button id="start-quiz-btn" class="btn btn-primary">
+          미식 성향 퀴즈 시작하기 <i class="fas fa-arrow-right"></i>
+        </button>
+      </div>
+    </section>
+
+    <!-- 2. 퀴즈 화면 (Quiz View) -->
+    <section id="quiz-view" class="view-section quiz-section" style="display: none;">
+      <div class="quiz-card-wrapper">
+        <!-- 프로그레스 인디케이터 -->
+        <div class="quiz-progress-bar">
+          <div id="quiz-progress-fill" class="progress-fill"></div>
+        </div>
+        <div class="quiz-meta">
+          <span class="quiz-badge">성향 분석 퀴즈</span>
+          <span id="quiz-progress-text" class="progress-text">1 / 12</span>
+        </div>
+        
+        <!-- 질문 영역 -->
+        <div class="quiz-question-box">
+          <h2 id="question-text">질문 로딩 중...</h2>
+        </div>
+
+        <!-- 답변 영역 -->
+        <div id="quiz-answers" class="quiz-answers-box">
+          <!-- 버튼들이 동적으로 채워집니다. -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. 분석 중 로딩 화면 (Loading View) -->
+    <section id="loading-view" class="view-section loading-section" style="display: none;">
+      <div class="loading-content">
+        <div class="loading-animation">
+          <div class="doodle-blob blob-1"></div>
+          <div class="doodle-blob blob-2"></div>
+          <div class="doodle-blob blob-3"></div>
+        </div>
+        <h2>당신의 취향 맵을 분석 중입니다...</h2>
+        <p>부산 공공데이터 식당의 텍스트와 취향 매칭도를 분석하여 정밀 정렬을 수행하고 있습니다.</p>
+      </div>
+    </section>
+
+    <!-- 4. 결과 화면 (Result View) -->
+    <section id="result-view" class="view-section result-section" style="display: none;">
+      
+      <!-- 상단 MBTI 성향 카드 영역 -->
+      <div class="result-header-card">
+        <div class="mbti-result-badge-box">
+          <span id="user-mbti-type" class="mbti-type-text">ESTJ</span>
+        </div>
+        <div class="mbti-result-info-box">
+          <h2 id="user-mbti-title" class="mbti-title-text">철저한 계획파 맛집 정복자</h2>
+          <p id="user-mbti-desc" class="mbti-desc-text">
+            이동 동선과 웨이팅 시간까지 치밀하게 설계하여 검증된 전통 맛집과 깔끔한 정식을 실패 없이 정복하는 프로 계획러입니다.
+          </p>
+        </div>
+        <button id="restart-btn" class="btn btn-secondary">
+          <i class="fas fa-undo"></i> 다시 검사하기
+        </button>
+      </div>
+
+      <!-- 모바일 화면용 지도/리스트 탭 전환 버튼 -->
+      <div class="mobile-tab-switch">
+        <button id="toggle-map-view" class="tab-btn active">
+          <i class="fas fa-map-marked-alt"></i> 지도 보기
+        </button>
+        <button id="toggle-list-view" class="tab-btn">
+          <i class="fas fa-list-ul"></i> 리스트 보기
+        </button>
+      </div>
+
+      <!-- 메인 듀얼 뷰 레이아웃 (Map + List Dual View) -->
+      <div class="dual-view-container">
+        
+        <!-- 왼쪽 지도 영역 -->
+        <div class="map-section active">
+          <div id="map-container" class="map-container-box">
+            <!-- Leaflet 지도가 삽입됩니다. -->
+          </div>
+        </div>
+
+        <!-- 오른쪽 리스트 영역 -->
+        <div class="list-section">
+          <!-- 상단 카테고리 필터 바 (Pill Shape) -->
+          <div id="genre-filters" class="genre-filters-bar">
+            <button class="filter-chip active" data-genre="all">전체</button>
+            <button class="filter-chip" data-genre="Korean">한식</button>
+            <button class="filter-chip" data-genre="Seafood">해산물</button>
+            <button class="filter-chip" data-genre="Japanese">일식</button>
+            <button class="filter-chip" data-genre="Western">양식</button>
+            <button class="filter-chip" data-genre="Chinese">중식</button>
+            <button class="filter-chip" data-genre="Cafe">카페·디저트</button>
+          </div>
+
+          <!-- 맛집 카드 리스트 스크롤 영역 -->
+          <div id="restaurants-list" class="restaurants-list-scroll">
+            <!-- 카드가 동적으로 채워집니다. -->
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Leaflet.js Map Library JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <!-- Custom Scripts -->
+  <script src="js/quiz.js"></script>
+  <script src="js/matcher.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>
