@@ -771,6 +771,23 @@ a:hover {
   margin-bottom: 8px;
 }
 
+.naver-search-link {
+  color: var(--color-midnight-ink);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: color 0.2s ease;
+}
+
+.naver-search-link:hover {
+  color: var(--color-tangerine);
+}
+
+.naver-search-link:hover i {
+  color: var(--color-tangerine) !important;
+}
+
 .card-menu-text, .card-address-text, .card-time-text {
   font-size: 12px;
   color: var(--color-stone);

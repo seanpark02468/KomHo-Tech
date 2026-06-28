@@ -308,6 +308,9 @@ const AppController = {
       Seafood: '해산물'
     }[rst.genre] || '기타';
 
+    // 네이버 검색 URL 생성 (부산 + 구군 + 상호명)
+    const naverSearchUrl = `https://search.naver.com/search.naver?query=${encodeURIComponent('부산 ' + rst.gugun + ' ' + rst.name)}`;
+
     // 카드 내부 렌더링
     card.innerHTML = `
       <div class="card-image-box">
@@ -319,7 +322,11 @@ const AppController = {
           <span class="card-genre-tag genre-${rst.genre.toLowerCase()}">${genreKo}</span>
           <span class="card-gugun-text">${rst.gugun}</span>
         </div>
-        <h3 class="card-title">${rst.name}</h3>
+        <h3 class="card-title">
+          <a href="${naverSearchUrl}" target="_blank" class="naver-search-link" onclick="event.stopPropagation()">
+            ${rst.name} <i class="fas fa-external-link-alt" style="font-size: 11px; margin-left: 2px; color: var(--color-fog);"></i>
+          </a>
+        </h3>
         <p class="card-menu-text">🍴 ${rst.menu}</p>
         <p class="card-address-text">📍 ${rst.address}</p>
         <p class="card-time-text">🕒 ${rst.hours}</p>
