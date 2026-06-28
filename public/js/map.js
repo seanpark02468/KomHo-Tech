@@ -130,6 +130,17 @@ const MapModule = {
       const icon = this.getGenreMarkerIcon(rst.genre, rst.matchScore);
       const marker = L.marker([rst.lat, rst.lng], { icon: icon });
 
+      // 음식점 상세 설명(desc)에서 첫 문장 추출하여 한 줄 소개 생성
+      let oneLineDesc = rst.desc ? rst.desc.split('.')[0].replace(/\n/g, ' ').trim() : '';
+      if (oneLineDesc.length > 55) {
+        oneLineDesc = oneLineDesc.substring(0, 55) + '...';
+      } else if (oneLineDesc && !oneLineDesc.endsWith('.')) {
+        oneLineDesc += '.';
+      }
+      if (!oneLineDesc) {
+        oneLineDesc = "부산의 대표적인 맛집입니다.";
+      }
+
       // 팝업 디자인 정의 (Geniestudio 카드 레이아웃 모방)
       const popupContent = `
         <div class="map-popup-card" style="
@@ -155,7 +166,7 @@ const MapModule = {
             font-weight: 500;
             line-height: 1.35;
           ">
-            💡 ${rst.matchReason}
+            💡 ${oneLineDesc}
           </div>
         </div>
       `;
