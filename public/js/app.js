@@ -53,6 +53,20 @@ const AppController = {
       });
     }
 
+    // 상단 로고 버튼 (클릭 시 랜딩페이지 복귀)
+    const logoBtn = document.getElementById('nav-logo-btn');
+    if (logoBtn) {
+      logoBtn.addEventListener('click', () => {
+        this.switchView('intro');
+      });
+    }
+
+    // 퀴즈 이전(Back) 버튼 바인딩
+    const backBtn = document.getElementById('quiz-back-btn');
+    if (backBtn) {
+      backBtn.addEventListener('click', () => this.goBackQuestion());
+    }
+
     // 언어 선택 버튼 바인딩
     const koBtn = document.getElementById('lang-ko-btn');
     const enBtn = document.getElementById('lang-en-btn');
@@ -218,6 +232,19 @@ const AppController = {
       setTimeout(() => {
         this.processResults();
       }, 1500);
+    }
+  },
+
+  // 7-1. 이전 질문으로 돌아가기 (Back)
+  goBackQuestion: function() {
+    if (this.state.currentQuestionIndex > 0) {
+      this.state.currentQuestionIndex--;
+      this.state.quizAnswers.pop();
+      this.renderQuestion();
+    } else {
+      // 1/12 단계에서 이전을 누르면 인트로 페이지로 가며 세션 초기화
+      this.state.quizAnswers = [];
+      this.switchView('intro');
     }
   },
 

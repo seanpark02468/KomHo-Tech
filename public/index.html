@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>미식지니 - MBTI 기반 부산 맛집 지도 추천</title>
+  <title>Type B - MBTI 기반 부산 맛집 지도 추천</title>
   
   <!-- Google Fonts: Inter & Geist & Outfit -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -32,9 +32,10 @@
   <!-- 상단 네비게이션 바 (Transparent Floating Bar) -->
   <header class="top-nav">
     <div class="nav-container">
-      <div class="nav-logo">
+      <!-- 웹 서비스 제목 클릭 시 랜딩페이지 복귀용 ID 부여 및 Type B로 변경 -->
+      <div class="nav-logo" id="nav-logo-btn" style="cursor: pointer;">
         <div class="logo-diamond"></div>
-        <span class="logo-text" data-i18n="nav-logo-text">미식지니</span>
+        <span class="logo-text" data-i18n="nav-logo-text">Type B</span>
       </div>
       <!-- 우측 상단 언어 선택기 (KOR / ENG) -->
       <div class="nav-lang-selector">
@@ -63,13 +64,15 @@
           <div class="avatar avatar-amethyst">☕</div>
           <div class="avatar avatar-mustard">🦀</div>
         </div>
+        <!-- 요구에 맞춘 타이틀 문구 갱신 -->
         <h1 class="hero-title" data-i18n="hero-title">
           나의 여행 <span class="highlight-text">MBTI</span>에 맞는<br>
-          부산 최고의 맛집을 지도로
+          부산 최고의 맛집을 나만의 지도로
         </h1>
+        <!-- 요구에 맞춘 서브타이틀 문구 갱신 -->
         <p class="hero-subtitle" data-i18n="hero-subtitle">
-          부산 미식투어 공공데이터와 여행 성향 퀴즈를 결합하여<br>
-          당신의 취향을 저격하는 1:1 커스텀 맛집 큐레이션 지도를 그려드립니다.
+          부산 미식투어 공공데이터와 여행 성향 MBTI를 결합해서<br>
+          1:1 커스텀 맛집 지도를 만들어보아요.
         </p>
         <button id="start-quiz-btn" class="btn btn-primary" data-i18n="start-quiz-btn">
           미식 성향 퀴즈 시작하기 <i class="fas fa-arrow-right"></i>
@@ -86,7 +89,13 @@
         </div>
         <div class="quiz-meta">
           <span class="quiz-badge" data-i18n="quiz-badge">성향 분석 퀴즈</span>
-          <span id="quiz-progress-text" class="progress-text">1 / 12</span>
+          <!-- 이전(Back) 버튼과 진척률 텍스트 정렬을 위한 래퍼 추가 -->
+          <div class="quiz-progress-wrapper">
+            <button id="quiz-back-btn" class="quiz-back-btn">
+              <i class="fas fa-chevron-left"></i> <span data-i18n="quiz-back-text">이전</span>
+            </button>
+            <span id="quiz-progress-text" class="progress-text">1 / 12</span>
+          </div>
         </div>
         
         <!-- 질문 영역 -->
@@ -109,8 +118,10 @@
           <div class="doodle-blob blob-2"></div>
           <div class="doodle-blob blob-3"></div>
         </div>
-        <h2 data-i18n="loading-title">당신의 취향 맵을 분석 중입니다...</h2>
-        <p data-i18n="loading-subtitle">부산 공공데이터 식당의 텍스트와 취향 매칭도를 분석하여 정밀 정렬을 수행하고 있습니다.</p>
+        <!-- 요구에 맞춘 로딩 타이틀 문구 갱신 -->
+        <h2 data-i18n="loading-title">잠깐, 맛집 고르는 중...</h2>
+        <!-- 요구에 맞춘 로딩 서브타이틀 문구 갱신 -->
+        <p data-i18n="loading-subtitle">곧 나만의 부산 맛집 지도가 완성돼요!</p>
       </div>
     </section>
 
